@@ -23,12 +23,14 @@ AWS VPC
 - Private Secrets Manager interface endpoint.
 - CloudTrail multi-region audit logging.
 - AWS Config recording and S3 delivery.
+- Managed AWS Config compliance rules for CloudTrail, VPC default security groups, ECR scanning/lifecycle/immutability/CMK encryption and Secrets Manager CMK encryption.
 - Versioned and encrypted audit buckets.
 
 ### IAM and workload identity
 - Dedicated EKS cluster role.
 - Dedicated EKS node role.
 - AWS-managed ECR pull-only permissions required by EKS node-hosted platform components.
+- Amazon EKS VPC CNI permissions isolated to a dedicated networking workload role.
 - EKS Pod Identity trust and association for the application ServiceAccount.
 - Application IAM is limited to the exact Secrets Manager ARN and its exact customer-managed KMS key.
 - Explicit EKS Access Entry for a supplied IAM admin role.
