@@ -26,8 +26,9 @@ module "iam" {
   source = "../../modules/iam"
   project_name = var.project_name
   environment = var.environment
+  aws_region = var.aws_region
   application_secret_arn = module.secrets_manager.application_secret_arn
-  ecr_repository_arn = module.ecr.repository_arn
+  application_secret_kms_key_arn = module.secrets_manager.application_secret_kms_key_arn
 }
 
 module "logging" {
