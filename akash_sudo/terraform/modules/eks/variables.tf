@@ -6,3 +6,5 @@ variable "node_role_arn" { type = string }
 variable "security_group_ids" { type = list(string) default = [] }
 variable "endpoint_public_access" { type = bool default = false }
 variable "endpoint_private_access" { type = bool default = true }
+variable "app_pod_identity_role_arn" { type = string }
+variable "admin_principal_arn" { type = string default = "" }
