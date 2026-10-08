@@ -10,6 +10,7 @@ output "config_rule_names" {
     aws_config_config_rule.ecr_lifecycle.name,
     aws_config_config_rule.ecr_immutable_tags.name,
     aws_config_config_rule.ecr_cmk.name,
-    aws_config_config_rule.secretsmanager_cmk.name
+    aws_config_config_rule.secretsmanager_cmk.name,
+    aws_config_config_rule.vpc_flow_logs_enabled.name
   ]
 }
