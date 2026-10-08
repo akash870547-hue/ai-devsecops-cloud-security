@@ -9,23 +9,33 @@ module "vpc" {
   private_subnet_cidrs = var.private_subnet_cidrs
   single_nat_gateway = var.single_nat_gateway
 }
+
 module "ecr" {
   source = "../../modules/ecr"
   project_name = var.project_name
   environment = var.environment
 }
+
+module "secrets_manager" {
+  source = "../../modules/secrets-manager"
+  project_name = var.project_name
+  environment = var.environment
+}
+
 module "iam" {
   source = "../../modules/iam"
   project_name = var.project_name
   environment = var.environment
-  application_secret_arn = var.application_secret_arn
+  application_secret_arn = module.secrets_manager.application_secret_arn
   ecr_repository_arn = module.ecr.repository_arn
 }
+
 module "logging" {
   source = "../../modules/logging"
   project_name = var.project_name
   environment = var.environment
 }
+
 module "eks" {
   source = "../../modules/eks"
   cluster_name = "${var.project_name}-${var.environment}"
