@@ -12,3 +12,5 @@ output "eks_cluster_name" { value = module.eks.cluster_name }
 output "eks_cluster_endpoint" { value = module.eks.cluster_endpoint }
 output "eks_cluster_security_group_id" { value = module.eks.cluster_security_group_id }
 output "app_pod_identity_role_arn" { value = module.iam.app_pod_identity_role_arn }
+output "config_rule_names" { value = module.logging.config_rule_names }
+output "vpc_cni_pod_identity_role_arn" { value = module.iam.vpc_cni_pod_identity_role_arn }
