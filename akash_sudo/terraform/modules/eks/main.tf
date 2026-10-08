@@ -1,3 +1,8 @@
+resource "aws_cloudwatch_log_group" "cluster" {
+  name              = "/aws/eks/${var.cluster_name}/cluster"
+  retention_in_days = 30
+}
+
 resource "aws_eks_cluster" "this" {
   name     = var.cluster_name
   role_arn = var.cluster_role_arn
@@ -19,13 +24,17 @@ resource "aws_eks_cluster" "this" {
   ]
 
   encryption_config {
-    provider { key_arn = aws_kms_key.eks.arn }
+    provider {
+      key_arn = aws_kms_key.eks.arn
+    }
     resources = ["secrets"]
   }
+
+  depends_on = [aws_cloudwatch_log_group.cluster]
 }
 
 resource "aws_kms_key" "eks" {
-  description             = "EKS secrets encryption key"
+  description             = "EKS Kubernetes Secrets encryption key"
   deletion_window_in_days = 7
   enable_key_rotation     = true
 }
@@ -35,6 +44,16 @@ resource "aws_kms_alias" "eks" {
   target_key_id = aws_kms_key.eks.key_id
 }
 
+resource "aws_launch_template" "system" {
+  name_prefix = "${var.cluster_name}-system-"
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+}
+
 resource "aws_eks_node_group" "system" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "ai-devsecops-system"
@@ -42,6 +61,7 @@ resource "aws_eks_node_group" "system" {
   subnet_ids      = var.subnet_ids
   capacity_type   = "ON_DEMAND"
   instance_types  = ["t3.medium"]
+  ami_type        = "AL2023_x86_64_STANDARD"
 
   scaling_config {
     desired_size = 2
@@ -49,9 +69,30 @@ resource "aws_eks_node_group" "system" {
     max_size     = 3
   }
 
-  update_config { max_unavailable = 1 }
+  update_config {
+    max_unavailable = 1
+  }
 
-  labels = { workload = "system" }
+  launch_template {
+    id      = aws_launch_template.system.id
+    version = aws_launch_template.system.latest_version
+  }
+
+  labels = {
+    workload = "system"
+  }
+
+  depends_on = [
+    aws_eks_cluster.this,
+    aws_eks_addon.pod_identity
+  ]
+}
+
+resource "aws_eks_addon" "pod_identity" {
+  cluster_name                = aws_eks_cluster.this.name
+  addon_name                  = "eks-pod-identity-agent"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "PRESERVE"
 
   depends_on = [aws_eks_cluster.this]
 }
