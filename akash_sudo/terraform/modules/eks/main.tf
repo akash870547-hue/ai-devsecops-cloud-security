@@ -83,7 +83,7 @@ resource "aws_eks_node_group" "system" {
     workload = "system"
   }
 
-  depends_on = [aws_eks_cluster.this, aws_eks_addon.pod_identity, aws_eks_addon.vpc_cni]
+  depends_on = [aws_eks_cluster.this]
 }
 
 resource "aws_eks_addon" "pod_identity" {
