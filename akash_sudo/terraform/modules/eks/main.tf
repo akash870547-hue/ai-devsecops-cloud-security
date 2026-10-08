@@ -83,7 +83,7 @@ resource "aws_eks_node_group" "system" {
     workload = "system"
   }
 
-  depends_on = [aws_eks_cluster.this]
+  depends_on = [aws_eks_cluster.this, aws_eks_addon.pod_identity, aws_eks_addon.vpc_cni]
 }
 
 resource "aws_eks_addon" "pod_identity" {
@@ -97,6 +97,15 @@ resource "aws_eks_addon" "pod_identity" {
       }
     }
   })
+
+  depends_on = [aws_eks_cluster.this]
+}
+
+resource "aws_eks_addon" "vpc_cni" {
+  cluster_name                = aws_eks_cluster.this.name
+  addon_name                  = "vpc-cni"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "PRESERVE"
 
   depends_on = [aws_eks_cluster.this]
 }
