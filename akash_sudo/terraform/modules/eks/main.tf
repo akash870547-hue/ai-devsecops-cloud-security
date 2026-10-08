@@ -9,7 +9,7 @@ resource "aws_eks_cluster" "this" {
   version  = var.cluster_version
 
   access_config {
-    authentication_mode = "API_AND_CONFIG_MAP"
+    authentication_mode = "API"
   }
 
   vpc_config {
@@ -86,8 +86,9 @@ resource "aws_eks_node_group" "system" {
 }
 
 resource "aws_eks_addon" "pod_identity" {
-  cluster_name                = aws_eks_cluster.this.name
-  addon_name                  = "eks-pod-identity-agent"
+  cluster_name = aws_eks_cluster.this.name
+  addon_name   = "eks-pod-identity-agent"
+
   configuration_values = jsonencode({
     agent = {
       additionalArgs = {
