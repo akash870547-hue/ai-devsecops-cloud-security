@@ -48,5 +48,6 @@ module "eks" {
   endpoint_public_access = var.eks_public_endpoint
   endpoint_private_access = true
   app_pod_identity_role_arn = module.iam.app_pod_identity_role_arn
+  vpc_cni_pod_identity_role_arn = module.iam.vpc_cni_pod_identity_role_arn
   admin_principal_arn = var.eks_admin_principal_arn
 }
