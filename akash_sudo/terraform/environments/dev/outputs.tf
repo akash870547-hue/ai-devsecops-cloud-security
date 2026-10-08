@@ -5,6 +5,7 @@ output "baseline_security_group_id" { value = module.vpc.baseline_security_group
 output "eks_cluster_role_arn" { value = module.iam.eks_cluster_role_arn }
 output "eks_node_role_arn" { value = module.iam.eks_node_role_arn }
 output "ecr_repository_url" { value = module.ecr.repository_url }
+output "ecr_repository_arn" { value = module.ecr.repository_arn }
 output "cloudtrail_name" { value = module.logging.cloudtrail_name }
 output "eks_cluster_name" { value = module.eks.cluster_name }
 output "eks_cluster_endpoint" { value = module.eks.cluster_endpoint }
