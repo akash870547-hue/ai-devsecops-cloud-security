@@ -85,23 +85,26 @@ resource "aws_iam_role_policy" "app_secret_read" {
   role   = aws_iam_role.app_pod_identity.id
   policy = data.aws_iam_policy_document.app_secret_read.json
 }
-
-data "aws_iam_policy_document" "pod_identity_agent" {
+data "aws_iam_policy_document" "vpc_cni_assume" {
   statement {
-    sid       = "EKSAuthForPodIdentity"
-    effect    = "Allow"
-    actions   = ["eks-auth:AssumeRoleForPodIdentity"]
-    resources = ["*"]
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+    actions = [
+      "sts:AssumeRole",
+      "sts:TagSession"
+    ]
   }
 }
 
-resource "aws_iam_role_policy" "pod_identity_agent" {
-  name   = "pod-identity-agent"
-  role   = aws_iam_role.eks_node.id
-  policy = data.aws_iam_policy_document.pod_identity_agent.json
+resource "aws_iam_role" "vpc_cni" {
+  name               = "${var.project_name}-${var.environment}-vpc-cni-role"
+  assume_role_policy = data.aws_iam_policy_document.vpc_cni_assume.json
 }
 
-resource "aws_iam_role_policy_attachment" "cni" {
-  role       = aws_iam_role.eks_node.name
+resource "aws_iam_role_policy_attachment" "vpc_cni" {
+  role       = aws_iam_role.vpc_cni.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
