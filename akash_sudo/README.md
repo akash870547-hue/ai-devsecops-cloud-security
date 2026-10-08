@@ -21,6 +21,7 @@ AWS VPC
 - Private worker subnets and NAT egress.
 - No unrestricted inbound baseline security group.
 - Private Secrets Manager interface endpoint.
+- VPC Flow Logs capturing accepted and rejected network traffic to CloudWatch Logs.
 - CloudTrail multi-region audit logging.
 - AWS Config recording and S3 delivery.
 - Managed AWS Config compliance rules for CloudTrail, VPC default security groups, ECR scanning/lifecycle/immutability/CMK encryption and Secrets Manager CMK encryption.
