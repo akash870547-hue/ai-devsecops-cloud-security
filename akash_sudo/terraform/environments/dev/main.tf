@@ -26,3 +26,15 @@ module "logging" {
   project_name = var.project_name
   environment = var.environment
 }
+
+module "eks" {
+  source = "../../modules/eks"
+  cluster_name = "${var.project_name}-${var.environment}"
+  cluster_version = var.eks_cluster_version
+  subnet_ids = module.vpc.private_subnet_ids
+  cluster_role_arn = module.iam.eks_cluster_role_arn
+  node_role_arn = module.iam.eks_node_role_arn
+  security_group_ids = [module.vpc.baseline_security_group_id]
+  endpoint_public_access = var.eks_public_endpoint
+  endpoint_private_access = true
+}
