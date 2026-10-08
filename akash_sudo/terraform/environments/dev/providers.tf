@@ -1,12 +1,2 @@
-provider "aws" {
-  region = var.aws_region
-  default_tags {
-    tags = {
-      Project     = var.project_name
-      Environment = var.environment
-      ManagedBy   = "terraform"
-      Owner       = "akash_sudo"
-      Workstream  = "cloud-security"
-    }
-  }
-}
+# Provider configuration is defined in versions.tf.
+# This file is intentionally kept empty to avoid duplicate provider blocks.
