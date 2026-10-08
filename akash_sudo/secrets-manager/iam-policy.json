@@ -1,0 +1,9 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "ReadOnlyNamedApplicationSecret",
+    "Effect": "Allow",
+    "Action": ["secretsmanager:GetSecretValue"],
+    "Resource": "arn:aws:secretsmanager:ap-south-1:ACCOUNT_ID:secret:ai-devsecops/app/REPLACE_ME"
+  }]
+}
