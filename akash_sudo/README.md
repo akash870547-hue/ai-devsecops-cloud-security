@@ -2,18 +2,30 @@
 
 This repository contains only my assigned Cloud Security Engineer implementation for the AI-Powered DevSecOps project.
 
-## Scope
-- AWS VPC, public/private subnet segmentation and security groups
+## Implemented scope
+- AWS VPC with public/private subnet segmentation
 - IAM roles and least-privilege foundations
 - Amazon ECR hardening
 - CloudTrail audit logging
-- AWS Config configuration/compliance visibility
-- EKS security, RBAC and NetworkPolicy (Phase 2)
-- Secrets Manager integration (Phase 2/3)
+- AWS Config foundation
+- Secure EKS baseline with private endpoint option
+- EKS control-plane audit logging
+- KMS encryption for Kubernetes Secrets
+- Kubernetes restricted Pod Security baseline
+- Least-privilege RBAC
+- Default-deny NetworkPolicy baseline
+- Secrets Manager access model
+- Security validation checklist
 
-Application development, CI/CD implementation, Prometheus/Grafana/AlertManager and AI assistant work are outside this workstream.
+## Remaining integration
+The final application image, CI/CD deployment and monitoring belong to other team members. My responsibility is to provide the security controls those components consume: IAM, ECR, EKS, RBAC, network isolation, secrets access and audit logging.
 
-## Phase 1
-Terraform-based AWS security foundation is implemented under `terraform/environments/dev`.
+## Phase workflow
+1. Run Terraform validation and plan.
+2. Apply infrastructure only after AWS account/budget approval.
+3. Configure EKS access and workload IAM.
+4. Replace the reference image with the team's ECR image digest.
+5. Apply Kubernetes security manifests.
+6. Capture sanitized security evidence.
 
-> Never commit AWS credentials, secrets, Terraform state or real tfvars.
+Never commit AWS credentials, secrets, Terraform state, kubeconfig files or real tfvars.
