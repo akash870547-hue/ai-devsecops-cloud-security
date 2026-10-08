@@ -31,8 +31,9 @@ AWS VPC
 - AWS-managed ECR pull-only permissions required by EKS node-hosted platform components.
 - EKS Pod Identity trust and association for the application ServiceAccount.
 - Application IAM is limited to the exact Secrets Manager ARN and its exact customer-managed KMS key.
-- Optional EKS Access Entry for an explicitly supplied admin principal.
-- EKS API access-entry mode is used instead of the legacy aws-auth path.
+- Explicit EKS Access Entry for a supplied IAM admin role.
+- Bootstrap cluster-creator admin access is disabled.
+- EKS API-only access-entry mode is used instead of the legacy aws-auth path.
 
 ### EKS
 - Kubernetes 1.35 baseline.
