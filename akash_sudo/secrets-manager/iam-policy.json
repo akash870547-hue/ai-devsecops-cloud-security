@@ -4,6 +4,6 @@
     "Sid": "ReadOnlyNamedApplicationSecret",
     "Effect": "Allow",
     "Action": ["secretsmanager:GetSecretValue"],
-    "Resource": "arn:aws:secretsmanager:ap-south-1:ACCOUNT_ID:secret:ai-devsecops/app/REPLACE_ME"
+    "Resource": "REPLACE_WITH_TERRAFORM_APPLICATION_SECRET_ARN"
   }]
 }
