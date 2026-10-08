@@ -74,6 +74,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 
 resource "aws_cloudtrail" "this" {
   name                          = "${var.project_name}-${var.environment}-trail"
+  enable_logging                = true
   s3_bucket_name                = aws_s3_bucket.cloudtrail.id
   include_global_service_events = true
   is_multi_region_trail         = true
