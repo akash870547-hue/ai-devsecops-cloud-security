@@ -82,17 +82,19 @@ resource "aws_eks_node_group" "system" {
     workload = "system"
   }
 
-  depends_on = [
-    aws_eks_cluster.this,
-    aws_eks_addon.pod_identity
-  ]
+  depends_on = [aws_eks_cluster.this]
 }
 
 resource "aws_eks_addon" "pod_identity" {
   cluster_name                = aws_eks_cluster.this.name
   addon_name                  = "eks-pod-identity-agent"
-  resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "PRESERVE"
+  configuration_values = jsonencode({
+    agent = {
+      additionalArgs = {
+        "-b" = "169.254.170.23"
+      }
+    }
+  })
 
   depends_on = [aws_eks_cluster.this]
 }
