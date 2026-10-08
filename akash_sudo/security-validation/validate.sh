@@ -35,16 +35,27 @@ aws cloudtrail get-trail-status --name "$CLOUDTRAIL_NAME" --query '{logging:IsLo
 echo "[9/13] AWS Config status"
 aws configservice describe-configuration-recorder-status --configuration-recorder-names "$CONFIG_RECORDER" --query 'ConfigurationRecordersStatus[0].{recording:recording,lastStatus:lastStatus}' --output table
 
-echo "[10/13] Kubernetes RBAC"
+echo "[10/13] AWS Config compliance rules"
+aws configservice describe-compliance-by-config-rule --config-rule-names \
+  "ai-devsecops-cloudtrail-enabled" \
+  "ai-devsecops-vpc-default-security-group-closed" \
+  "ai-devsecops-ecr-scan" \
+  "ai-devsecops-ecr-lifecycle" \
+  "ai-devsecops-ecr-immutable-tags" \
+  "ai-devsecops-ecr-cmk" \
+  "ai-devsecops-secretsmanager-cmk" \
+  --query 'ConfigRules[].{rule:ConfigRuleName,status:Compliance.ComplianceType}' --output table
+
+echo "[11/13] Kubernetes RBAC"
 kubectl auth can-i --list --as="system:serviceaccount:$NAMESPACE:app"
 
-echo "[11/13] Network policies"
+echo "[12/13] Network policies"
 kubectl get networkpolicy -n "$NAMESPACE"
 
-echo "[12/13] Pod security labels"
+echo "[13/13] Pod security labels"
 kubectl get namespace "$NAMESPACE" --show-labels
 
-echo "[13/13] Workload security context"
+echo "[14/14] Workload security context"
 kubectl get deployment security-reference -n "$NAMESPACE" -o jsonpath='{.spec.template.spec.containers[0].securityContext}' || true
 echo
 
