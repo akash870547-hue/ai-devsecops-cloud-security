@@ -106,3 +106,20 @@ resource "aws_config_config_rule" "secretsmanager_cmk" {
 
   depends_on = [aws_config_configuration_recorder_status.this]
 }
+
+resource "aws_config_config_rule" "vpc_flow_logs_enabled" {
+  name        = "${var.project_name}-vpc-flow-logs"
+  description = "Require VPC Flow Logs on the project VPC."
+
+  source {
+    owner             = "AWS"
+    source_identifier = "VPC_FLOW_LOGS_ENABLED"
+  }
+
+  scope {
+    compliance_resource_id    = var.vpc_id
+    compliance_resource_types = ["AWS::EC2::VPC"]
+  }
+
+  depends_on = [aws_config_configuration_recorder_status.this]
+}
