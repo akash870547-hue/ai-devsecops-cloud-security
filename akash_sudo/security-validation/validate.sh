@@ -44,6 +44,7 @@ aws configservice describe-compliance-by-config-rule --config-rule-names \
   "ai-devsecops-ecr-immutable-tags" \
   "ai-devsecops-ecr-cmk" \
   "ai-devsecops-secretsmanager-cmk" \
+  "ai-devsecops-vpc-flow-logs" \
   --query 'ConfigRules[].{rule:ConfigRuleName,status:Compliance.ComplianceType}' --output table
 
 echo "[11/14] Kubernetes RBAC"
