@@ -8,16 +8,17 @@ module "vpc" {
   private_subnet_cidrs = var.private_subnet_cidrs
   single_nat_gateway = var.single_nat_gateway
 }
+module "ecr" {
+  source = "../../modules/ecr"
+  project_name = var.project_name
+  environment = var.environment
+}
 module "iam" {
   source = "../../modules/iam"
   project_name = var.project_name
   environment = var.environment
   application_secret_arn = var.application_secret_arn
-}
-module "ecr" {
-  source = "../../modules/ecr"
-  project_name = var.project_name
-  environment = var.environment
+  ecr_repository_arn = module.ecr.repository_arn
 }
 module "logging" {
   source = "../../modules/logging"
