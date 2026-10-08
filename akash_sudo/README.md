@@ -10,7 +10,7 @@ AWS VPC
 -> hardened managed node group
 -> EKS Pod Identity
 -> least-privilege application IAM
--> Secrets Manager
+-> customer-managed encrypted Secrets Manager
 -> ECR
 -> CloudTrail + AWS Config
 
@@ -28,24 +28,25 @@ AWS VPC
 ### IAM and workload identity
 - Dedicated EKS cluster role.
 - Dedicated EKS node role.
-- ECR pull restricted to the project repository.
+- AWS-managed ECR pull-only permissions required by EKS node-hosted platform components.
 - EKS Pod Identity trust and association for the application ServiceAccount.
-- Secrets Manager access limited to the application secret ARN.
+- Application IAM is limited to the exact Secrets Manager ARN and its exact customer-managed KMS key.
 - Optional EKS Access Entry for an explicitly supplied admin principal.
+- EKS API access-entry mode is used instead of the legacy aws-auth path.
 
 ### EKS
 - Kubernetes 1.35 baseline.
 - Private API endpoint by default.
 - API audit, authenticator, controller manager and scheduler logging.
 - Customer-managed KMS key for Kubernetes Secrets encryption.
-- Pod Identity Agent managed add-on.
+- Pod Identity Agent managed add-on with IPv4 credential endpoint configuration.
 - AL2023 managed node group.
 - IMDSv2 required with hop limit 1.
 - Managed node scaling 1-3 nodes.
 
 ### Kubernetes workload security
 - Restricted Pod Security namespace labels.
-- Least-privilege Role/RoleBinding.
+- Application ServiceAccount has no Kubernetes API permissions by default.
 - Default-deny ingress and egress.
 - DNS-only cluster egress plus VPC HTTPS and Pod Identity credential endpoint.
 - Non-root container.
@@ -65,13 +66,13 @@ AWS VPC
 
 ## Secrets workflow
 
-The Terraform code creates the application secret container but never commits a secret value.
+Terraform creates the secret container and customer-managed KMS key, but never creates or stores the secret value.
 
-Populate the secret after infrastructure creation using AWS Secrets Manager or the team's deployment process. Never place the secret value in Git, Terraform variables, manifests or source code.
+After infrastructure creation, populate the value through an approved AWS Secrets Manager workflow. Never place the real value in Git, Terraform variables, manifests or source code.
 
 ## Validation
 
-Run:
+From a machine with AWS and kubectl access:
 
 bash akash_sudo/security-validation/validate.sh
 
