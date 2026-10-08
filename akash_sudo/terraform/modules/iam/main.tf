@@ -12,7 +12,7 @@ resource "aws_iam_role" "eks_cluster" {
 }
 
 resource "aws_iam_role_policy_attachment" "cluster" {
-  role = aws_iam_role.eks_cluster.name
+  role       = aws_iam_role.eks_cluster.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 
@@ -25,12 +25,12 @@ data "aws_iam_policy_document" "eks_node_assume" {
 }
 
 resource "aws_iam_role" "eks_node" {
-  name = "${var.project_name}-${var.environment}-eks-node-role"
+  name               = "${var.project_name}-${var.environment}-eks-node-role"
   assume_role_policy = data.aws_iam_policy_document.eks_node_assume.json
 }
 
 resource "aws_iam_role_policy_attachment" "worker" {
-  role = aws_iam_role.eks_node.name
+  role       = aws_iam_role.eks_node.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 
@@ -60,7 +60,22 @@ resource "aws_iam_role_policy" "ecr_pull" {
   policy = data.aws_iam_policy_document.ecr_pull.json
 }
 
+data "aws_iam_policy_document" "pod_identity_agent" {
+  statement {
+    sid       = "EKSAuthForPodIdentity"
+    effect    = "Allow"
+    actions   = ["eks-auth:AssumeRoleForPodIdentity"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "pod_identity_agent" {
+  name   = "pod-identity-agent"
+  role   = aws_iam_role.eks_node.id
+  policy = data.aws_iam_policy_document.pod_identity_agent.json
+}
+
 resource "aws_iam_role_policy_attachment" "cni" {
-  role = aws_iam_role.eks_node.name
+  role       = aws_iam_role.eks_node.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
