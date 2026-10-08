@@ -5,3 +5,7 @@ variable "application_secret_arn" {
   description = "Exact Secrets Manager ARN the application workload may read."
   default     = "arn:aws:secretsmanager:ap-south-1:000000000000:secret:REPLACE_ME"
 }
+variable "ecr_repository_arn" {
+  type        = string
+  description = "Exact ECR repository ARN that EKS nodes may pull from."
+}
