@@ -4,5 +4,8 @@ resource "aws_eks_pod_identity_association" "app" {
   service_account = "app"
   role_arn        = var.app_pod_identity_role_arn
 
-  depends_on = [aws_eks_node_group.system]
+  depends_on = [
+    aws_eks_node_group.system,
+    aws_eks_addon.pod_identity
+  ]
 }
