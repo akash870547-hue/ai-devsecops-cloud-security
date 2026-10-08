@@ -34,9 +34,30 @@ resource "aws_iam_role_policy_attachment" "worker" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 
-resource "aws_iam_role_policy_attachment" "ecr" {
-  role = aws_iam_role.eks_node.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+data "aws_iam_policy_document" "ecr_pull" {
+  statement {
+    sid       = "ECRAuth"
+    effect    = "Allow"
+    actions   = ["ecr:GetAuthorizationToken"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "ECRRepositoryPull"
+    effect = "Allow"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:GetDownloadUrlForLayer"
+    ]
+    resources = [var.ecr_repository_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "ecr_pull" {
+  name   = "ecr-pull-only"
+  role   = aws_iam_role.eks_node.id
+  policy = data.aws_iam_policy_document.ecr_pull.json
 }
 
 resource "aws_iam_role_policy_attachment" "cni" {
