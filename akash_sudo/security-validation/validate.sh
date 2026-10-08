@@ -20,28 +20,31 @@ aws eks describe-cluster --name "$CLUSTER_NAME" --query 'cluster.encryptionConfi
 echo "[4/12] EKS Pod Identity agent"
 aws eks describe-addon --cluster-name "$CLUSTER_NAME" --addon-name eks-pod-identity-agent --query 'addon.{status:status,version:addonVersion}' --output table
 
-echo "[5/12] ECR protection"
+echo "[5/12] EKS access entries"
+aws eks list-access-entries --cluster-name "$CLUSTER_NAME" --output table
+
+echo "[6/13] ECR protection"
 aws ecr describe-repositories --repository-names "$ECR_REPOSITORY" --query 'repositories[0].{tagMutability:imageTagMutability,scan:imageScanningConfiguration.scanOnPush,encryption:encryptionConfiguration.encryptionType,kms:encryptionConfiguration.kmsKey}' --output table
 
-echo "[6/12] Application secret"
+echo "[7/13] Application secret"
 aws secretsmanager describe-secret --secret-id "$SECRET_NAME" --query '{name:Name,arn:ARN,kms:KmsKeyId}' --output table
 
-echo "[7/12] CloudTrail status"
+echo "[8/13] CloudTrail status"
 aws cloudtrail get-trail-status --name "$CLOUDTRAIL_NAME" --query '{logging:IsLogging,lastDelivery:LatestDeliveryTime}' --output table
 
-echo "[8/12] AWS Config status"
+echo "[9/13] AWS Config status"
 aws configservice describe-configuration-recorder-status --configuration-recorder-names "$CONFIG_RECORDER" --query 'ConfigurationRecordersStatus[0].{recording:recording,lastStatus:lastStatus}' --output table
 
-echo "[9/12] Kubernetes RBAC"
+echo "[10/13] Kubernetes RBAC"
 kubectl auth can-i --list --as="system:serviceaccount:$NAMESPACE:app"
 
-echo "[10/12] Network policies"
+echo "[11/13] Network policies"
 kubectl get networkpolicy -n "$NAMESPACE"
 
-echo "[11/12] Pod security labels"
+echo "[12/13] Pod security labels"
 kubectl get namespace "$NAMESPACE" --show-labels
 
-echo "[12/12] Workload security context"
+echo "[13/13] Workload security context"
 kubectl get deployment security-reference -n "$NAMESPACE" -o jsonpath='{.spec.template.spec.containers[0].securityContext}' || true
 echo
 
